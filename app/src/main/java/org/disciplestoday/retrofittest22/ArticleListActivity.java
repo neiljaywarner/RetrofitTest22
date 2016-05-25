@@ -2,6 +2,7 @@ package org.disciplestoday.retrofittest22;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -116,7 +117,7 @@ public class ArticleListActivity extends AppCompatActivity  implements FeedLoade
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            Item item = mItems.get(position);
+            final Item item = mItems.get(position);
             String name = item.getTitle();
             String imageUrl = item.getImage();
             Log.e("NJW4", "****imageUrl=" + imageUrl);
@@ -141,6 +142,9 @@ public class ArticleListActivity extends AppCompatActivity  implements FeedLoade
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(v.getContext(), "IN ONCLICK LISTENER", Toast.LENGTH_LONG).show();
+                    String link = item.getLink();
+                    Log.i("NJW", "link=" + link);
+                    openInBrowser(link);
                     /*
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
@@ -187,7 +191,11 @@ public class ArticleListActivity extends AppCompatActivity  implements FeedLoade
         }
     }
 
-
+    private void openInBrowser(String link) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+        startActivity(browserIntent);
+    }
+    // http://stackoverflow.com/questions/2201917/how-can-i-open-a-url-in-androids-web-browser-from-my-application
 
 
 }

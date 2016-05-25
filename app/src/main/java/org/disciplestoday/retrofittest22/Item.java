@@ -14,6 +14,19 @@ public class Item {
     String title;
     private String introtext;
 
+    //TODO: Clean up unneeded getters/setters.
+
+    public String getLink() {
+        return "http://disciplestoday.org/" + link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    String link;
+
+
     public String getFulltext() {
         return fulltext;
     }
