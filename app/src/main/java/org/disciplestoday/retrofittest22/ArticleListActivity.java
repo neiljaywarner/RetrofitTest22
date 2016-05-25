@@ -37,7 +37,7 @@ public class ArticleListActivity extends AppCompatActivity  implements FeedLoade
      * device.
      */
     private boolean mTwoPane;
-    private List<Repo> mRepos;
+    private List<Item> mItems;
     private FeedLoaderAsyncTask asyncTask;
     private RecyclerView recyclerView;
 
@@ -82,14 +82,14 @@ public class ArticleListActivity extends AppCompatActivity  implements FeedLoade
 
     @Override
     public void onTaskCompleted() {
-        mRepos = asyncTask.getRepos();
-        Log.i(TAG, "NJW: + lastrepo" +  mRepos.get(mRepos.size()-2).getName());
+        mItems = asyncTask.getItems();
+        Log.i(TAG, "NJW: + lastItem" +  mItems.get(mItems.size()-2).getTitle());
         setupRecyclerView(recyclerView);
 
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(mRepos));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(mItems));
     }
 
 
@@ -97,9 +97,9 @@ public class ArticleListActivity extends AppCompatActivity  implements FeedLoade
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<Repo> mValues;
+        private final List<Item> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<Repo> items) {
+        public SimpleItemRecyclerViewAdapter(List<Item> items) {
             mValues = items;
         }
 
@@ -113,8 +113,8 @@ public class ArticleListActivity extends AppCompatActivity  implements FeedLoade
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            Repo repo = mRepos.get(position);
-            String name = repo.getName();
+            Item item = mItems.get(position);
+            String name = item.getTitle();
             holder.mContentView.setText(name);
            // holder.mIdView.setText(mValues.get(position).id);
            // holder.mContentView.setText(mValues.get(position).content);
@@ -153,7 +153,7 @@ public class ArticleListActivity extends AppCompatActivity  implements FeedLoade
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public Repo mItem;
+            public Item mItem;
 
             public ViewHolder(View view) {
                 super(view);
