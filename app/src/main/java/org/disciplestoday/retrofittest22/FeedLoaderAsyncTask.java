@@ -3,9 +3,15 @@ package org.disciplestoday.retrofittest22;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.IOException;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -39,12 +45,24 @@ public class FeedLoaderAsyncTask extends AsyncTask<Void,Void, Feed> {
 
     @Override
     protected Feed doInBackground(Void... params) {
-        Log.i("NJW", "in doonbackgrond");
+        Log.i("NJW", "in doonbackgrond"); HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        //TODO: Why doesn't this work to get extra_fields
+
+        GsonConverterFactory gsonConverterFactory = GsonConverterFactory.create(gson);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .addConverterFactory(gsonConverterFactory)
                 .build();
 
+        Log.i("NJW", "built retrofit");
         DTService service = retrofit.create(DTService.class);
         Call<Feed> call = service.listHighlights();  //Featured News=353?
         try {

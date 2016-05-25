@@ -13,9 +13,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.squareup.picasso.Picasso;
 
 import org.disciplestoday.retrofittest22.dummy.DummyContent;
 
@@ -115,7 +118,22 @@ public class ArticleListActivity extends AppCompatActivity  implements FeedLoade
             holder.mItem = mValues.get(position);
             Item item = mItems.get(position);
             String name = item.getTitle();
+            String imageUrl = item.getImage();
+            Log.e("NJW4", "****imageUrl=" + imageUrl);
+            if (!imageUrl.isEmpty())
+            {
+                Picasso.with(holder.mImageView.getContext()).load(imageUrl).into(holder.mImageView);
+            }
+
+            /*
+            List<ExtraField> extraFields = item.getExtraFields();
+            Log.e("NJW", "sie extrafields" + extraFields.size());
+            Log.i("NJW", "Extrafield 2=type" + extraFields.get(2).getName());
+            String imageUrl = extraFields.get(2).getValue();
+            Log.e("NJW", "imageUrl="  + imageUrl);
+            */
             holder.mContentView.setText(name);
+          //  holder.mContentView.setText(name);
            // holder.mIdView.setText(mValues.get(position).id);
            // holder.mContentView.setText(mValues.get(position).content);
 
@@ -151,14 +169,14 @@ public class ArticleListActivity extends AppCompatActivity  implements FeedLoade
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-            public final TextView mIdView;
+            public final ImageView mImageView;
             public final TextView mContentView;
             public Item mItem;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
+                mImageView = (ImageView) view.findViewById(R.id.imageViewThumbnail);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
 
