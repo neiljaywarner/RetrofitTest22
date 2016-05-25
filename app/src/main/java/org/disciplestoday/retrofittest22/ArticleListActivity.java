@@ -125,9 +125,9 @@ public class ArticleListActivity extends AppCompatActivity  implements FeedLoade
                 Picasso.with(holder.mImageView.getContext()).load(imageUrl).into(holder.mImageView);
             }
 
-            /*
             List<ExtraField> extraFields = item.getExtraFields();
-            Log.e("NJW", "sie extrafields" + extraFields.size());
+            Log.e("NJW7", "sie extrafields" + extraFields.size());
+            /*
             Log.i("NJW", "Extrafield 2=type" + extraFields.get(2).getName());
             String imageUrl = extraFields.get(2).getValue();
             Log.e("NJW", "imageUrl="  + imageUrl);

@@ -13,19 +13,26 @@ public class Item {
 
     String title;
     private String introtext;
-    //NOTE: Must match json. TODO: use annotation so it doesn't have to.
-    @SerializedName("extra_fields")
-    //TODO: WHY doens't this work???
-    private List<ExtraField> extra_fields;
 
-
-
-    public List<ExtraField> getExtraFields() {
-        Log.e("NJW2", "getExtrafields");
-        Log.e("NJW2", "size=" + extra_fields.size());
-        return extra_fields;
+    public String getFulltext() {
+        return fulltext;
     }
 
+    public void setFulltext(String fulltext) {
+        this.fulltext = fulltext;
+    }
+
+    private String fulltext;
+
+    //NOTE: Must match json. TODO: use annotation so it doesn't have to.
+    @SerializedName("extra_fields")
+    private List<ExtraField> extra_fields;
+
+    public List<ExtraField> getExtraFields() {
+        Log.e("NJW2", "extra fields size=" + extra_fields.size());
+        return extra_fields;
+    }
+    //TODO: Use extra fields when needed.
 
     public String getTitle() {
         return title;
@@ -36,41 +43,78 @@ public class Item {
     }
 
     public String getIntroText() {
-        Log.e("NJW2", "ingetintrotext");
         return introtext;
     }
 
     public void setIntroText(String introText) {
-        Log.e("NJW2", "inSETintrotext");
-
         this.introtext = introtext;
     }
 
     public void setExtraFields(List<ExtraField> extraFields) {
-        Log.e("NJW2", "in settetrafields");
         this.extra_fields = extraFields;
     }
 
-
     public String getImage()
     {
-        Log.e("NJW3", "title=" + title + ";in Item.java->introText=" + introtext);
-        int start = introtext.indexOf("images");
+        String imageUrl;
+        imageUrl = getImageUrl(introtext, "jpg");
+        if (!imageUrl.isEmpty())
+        {
+            return imageUrl;
+        }
+
+        imageUrl = getImageUrl(introtext, "png");
+        if (!imageUrl.isEmpty())
+        {
+            return imageUrl;
+        }
+
+        imageUrl = getImageUrl(introtext, "gif");
+        if (!imageUrl.isEmpty())
+        {
+            return imageUrl;
+        }
+
+        imageUrl = getImageUrl(fulltext, "jpg");
+        if (!imageUrl.isEmpty())
+        {
+            return imageUrl;
+        }
+
+        imageUrl = getImageUrl(fulltext, "png");
+        if (!imageUrl.isEmpty())
+        {
+            return imageUrl;
+        }
+
+        imageUrl = getImageUrl(fulltext, "gif");
+        if (!imageUrl.isEmpty())
+        {
+            return imageUrl;
+        }
+
+
+
+        return "";
+
+    }
+
+    //TODO: Cleanup code!!!
+
+    private String getImageUrl(String fieldToSearch, String fileSuffix)
+    {
+        int start = fieldToSearch.indexOf("images");
         if (start < 0) {
             return "";
         }
-        Log.e("NJW3", "start=" + start);
-        int end = introtext.indexOf(".jpg");
+        int end = fieldToSearch.indexOf("." + fileSuffix);
         if (end < 0)
         {
             return "";
         }
 
-        Log.e("NJW3", "end=" + end);
-
-        String s = introtext.substring(start, end);
-        String image = "http://disciplestoday.org/" + s + ".jpg";
-        Log.e("NJW3", "image=" + image);
+        String s = fieldToSearch.substring(start, end);
+        String image = "http://disciplestoday.org/" + s + "." + fileSuffix;
         return image;
     }
 
