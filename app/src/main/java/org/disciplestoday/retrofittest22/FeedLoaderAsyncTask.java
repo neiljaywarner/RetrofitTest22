@@ -37,7 +37,7 @@ public class FeedLoaderAsyncTask extends AsyncTask<Void,Void, List<Repo>> {
     protected List<Repo> doInBackground(Void... params) {
         Log.i("NJW", "in doonbackgrond");
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.github.com")
+                .baseUrl(AppConfig.serverBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
