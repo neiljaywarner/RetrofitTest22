@@ -90,9 +90,7 @@ public class ExampleInstrumentationTest {
     @Test
     public void testMockOctocatDispatch() throws Exception {
         server = new MockWebServer();
-        server.enqueue(new MockResponse()
-                .setResponseCode(200).setBody(StringUtils.getStringFromFile(InstrumentationRegistry.getContext(),
-                        "octocat_ok.json")));
+
 
         final Dispatcher dispatcher = new Dispatcher() {
 
@@ -100,7 +98,7 @@ public class ExampleInstrumentationTest {
             public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
                 // e.g.     @GET("users/{user}/repos")
                 Log.d("NJW", "request.getPath()" + request.getPath());
-                if (request.getPath().equals("/users")){
+                if (request.getPath().contains("/users/")){
                     try {
                         return new MockResponse()
                                 .setResponseCode(200).setBody(StringUtils.getStringFromFile(InstrumentationRegistry.getContext(),
@@ -117,6 +115,7 @@ public class ExampleInstrumentationTest {
                 return new MockResponse().setResponseCode(404);
             }
         };
+        server.setDispatcher(dispatcher);
         server.play();
         AppConfig.serverBaseUrl = server.getUrl("/").toString();
 
