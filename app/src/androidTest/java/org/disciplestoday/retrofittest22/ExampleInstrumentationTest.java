@@ -11,8 +11,10 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 
+import com.google.mockwebserver.Dispatcher;
 import com.google.mockwebserver.MockResponse;
 import com.google.mockwebserver.MockWebServer;
+import com.google.mockwebserver.RecordedRequest;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -38,6 +40,8 @@ import static org.junit.Assert.*;
 @MediumTest
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentationTest {
+
+    public static final String TAG = ExampleInstrumentationTest.class.getSimpleName();
 
     @Rule
     public ActivityTestRule<ArticleListActivity> mActivityRule = new ActivityTestRule(ArticleListActivity.class, true, false);
@@ -81,6 +85,50 @@ public class ExampleInstrumentationTest {
 
         server.shutdown();
 
+    }
+
+    @Test
+    public void testMockOctocatDispatch() throws Exception {
+        server = new MockWebServer();
+        server.enqueue(new MockResponse()
+                .setResponseCode(200).setBody(StringUtils.getStringFromFile(InstrumentationRegistry.getContext(),
+                        "octocat_ok.json")));
+
+        final Dispatcher dispatcher = new Dispatcher() {
+
+            @Override
+            public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
+                // e.g.     @GET("users/{user}/repos")
+                Log.d("NJW", "request.getPath()" + request.getPath());
+                if (request.getPath().equals("/users")){
+                    try {
+                        return new MockResponse()
+                                .setResponseCode(200).setBody(StringUtils.getStringFromFile(InstrumentationRegistry.getContext(),
+                                        "octocat_ok.json"));
+                    } catch (Exception e) {
+                        Log.e(TAG, "Exception:" + e.getMessage());
+                        return new MockResponse().setResponseCode(500);
+                    }
+                } else if (request.getPath().equals("v1/check/version/")){
+                    return new MockResponse().setResponseCode(200).setBody("version=9");
+                } else if (request.getPath().equals("/v1/profile/info")) {
+                    return new MockResponse().setResponseCode(200).setBody("{\\\"info\\\":{\\\"name\":\"Lucas Albuquerque\",\"age\":\"21\",\"gender\":\"male\"}}");
+                }
+                return new MockResponse().setResponseCode(404);
+            }
+        };
+        server.play();
+        AppConfig.serverBaseUrl = server.getUrl("/").toString();
+
+        Intent intent = new Intent();
+        mActivityRule.launchActivity(intent);
+        Log.d(TAG, "About to launch activity and check for text;");
+        Espresso.onView(ViewMatchers.withText("Spoon-AssetFile-Mocked-Knife")).check(matches(isDisplayed()));
+        Log.d(TAG, "test passed for text from mock");
+
+        //and check regular is not displayed.
+
+        server.shutdown();
     }
 
 }
