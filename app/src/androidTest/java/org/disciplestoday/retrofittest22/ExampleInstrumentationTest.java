@@ -1,6 +1,5 @@
 package org.disciplestoday.retrofittest22;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
@@ -20,12 +19,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-
-/*
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-*/
 
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -49,26 +42,19 @@ public class ExampleInstrumentationTest {
 
     private MockWebServer server;
 
-
-
-
-    @Test
-    public void useAppContext() throws Exception {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
-
-        assertEquals("org.disciplestoday.retrofittest22", appContext.getPackageName());
-    }
-
     @Test
     public void testOctoCat() {
+        Intent intent = new Intent();
+        Log.d(TAG, "--->About to launch activity and check for text;");
+        mActivityRule.launchActivity(intent);
         Espresso.onView(ViewMatchers.withText("Spoon-Knife")).check(matches(isDisplayed()));
+        Log.d(TAG, "--->No exception if this code is reached, test passed with no thread.sleep thanks to Espresso");
+
     }
 
     @Test
     public void testMockOctoCat() throws Exception {
         // Grateful credit to https://riggaroo.co.za/retrofit-2-mocking-http-responses/ and others.
-
 
         // Start the server.
         server = new MockWebServer();
@@ -78,10 +64,12 @@ public class ExampleInstrumentationTest {
         AppConfig.serverBaseUrl = server.getUrl("/").toString();
 
         Intent intent = new Intent();
+        Log.d(TAG, "--->About to launch activity and check for text;");
         mActivityRule.launchActivity(intent);
 
         Espresso.onView(ViewMatchers.withText("Spoon-AssetFile-Mocked-Knife")).check(matches(isDisplayed()));
         //and check regular is not displayed.
+        Log.d(TAG, "--->simple Test passed from mock json, about to shutdown mock server.");
 
         server.shutdown();
 
@@ -120,12 +108,10 @@ public class ExampleInstrumentationTest {
         AppConfig.serverBaseUrl = server.getUrl("/").toString();
 
         Intent intent = new Intent();
+        Log.d(TAG, "--->About to launch activity and check for text;");
         mActivityRule.launchActivity(intent);
-        Log.d(TAG, "About to launch activity and check for text;");
         Espresso.onView(ViewMatchers.withText("Spoon-AssetFile-Mocked-Knife")).check(matches(isDisplayed()));
-        Log.d(TAG, "test passed for text from mock");
-
-        //and check regular is not displayed.
+        Log.d(TAG, "--->test passed for text from mock");
 
         server.shutdown();
     }
